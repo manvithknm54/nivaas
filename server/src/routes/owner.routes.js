@@ -5,6 +5,7 @@ import { createPg, getMyPg, updatePg, getInvite, rotateInvite } from "../control
 import { createRoom, listRooms, deleteRoom } from "../controllers/room.controller.js";
 import { listTenants, approveTenant, rejectTenant, removeTenant } from "../controllers/tenant.controller.js";
 import { listMonth, generate, detail, addEntry, reverseEntry } from "../controllers/rent.controller.js";
+import { listMeals, setLock } from "../controllers/meal.controller.js";
 
 const r = Router();
 r.use(protect, allow("owner"));
@@ -30,4 +31,6 @@ r.post("/rent/generate", generate);
 r.get("/rent/:id", detail);
 r.post("/rent/:id/entries", addEntry);
 r.post("/rent/entries/:id/reverse", reverseEntry);
+r.get("/meals", listMeals);
+r.post("/meals/:id/lock", setLock);
 export default r;
