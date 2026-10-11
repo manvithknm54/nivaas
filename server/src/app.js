@@ -5,6 +5,7 @@ import cookieParser from "cookie-parser";
 import { ZodError } from "zod";
 import authRoutes from "./routes/auth.routes.js";
 import ownerRoutes from "./routes/owner.routes.js";
+import tenantRoutes from "./routes/tenant.routes.js";
 import joinRoutes from "./routes/join.routes.js";
 
 const app = express();
@@ -16,6 +17,7 @@ app.use(cookieParser());
 app.get("/api/health", (_req, res) => res.json({ status: "ok", app: "nivaas" }));
 app.use("/api/auth", authRoutes);
 app.use("/api/owner", ownerRoutes);
+app.use("/api/tenant", tenantRoutes);
 app.use("/api/join", joinRoutes);
 
 app.use((err, _req, res, _next) => {

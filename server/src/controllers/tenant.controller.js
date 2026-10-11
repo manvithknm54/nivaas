@@ -3,6 +3,8 @@ import User from "../models/User.js";
 import Room from "../models/Room.js";
 import { ApiError } from "../utils/ApiError.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
+import { generateDuesForPg } from "../services/rentService.js";
+import { currentMonth } from "../utils/dates.js";
 
 export const listTenants = asyncHandler(async (req, res) => {
   const tenants = await User.find({ pg: req.pg._id, role: "tenant", status: { $in: ["pending", "active"] } })
@@ -27,6 +29,7 @@ export const approveTenant = asyncHandler(async (req, res) => {
   tenant.status = "active";
   tenant.joinedOn = new Date();
   await tenant.save();
+  await generateDuesForPg(req.pg, currentMonth());
   res.json({ ok: true });
 });
 

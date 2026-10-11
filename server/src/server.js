@@ -1,6 +1,8 @@
 import "dotenv/config";
 import app from "./app.js";
 import { connectDB } from "./config/db.js";
+import { startScheduler } from "./jobs/scheduler.js";
 
 await connectDB();
 app.listen(process.env.PORT, () => console.log(`Nivaas API on port ${process.env.PORT}`));
+startScheduler();
