@@ -64,3 +64,26 @@ export const dateLabel = (iso) =>
 
 // Format rent due date
 export const dueLabel = (s) => dateLabel(`${s}T00:00:00`);
+
+export const addDaysYmd = (ymd, n) => {
+  const d = new Date(`${ymd}T00:00:00Z`);
+  d.setUTCDate(d.getUTCDate() + n);
+  return d.toISOString().slice(0, 10);
+};
+
+export const daysBetweenYmd = (a, b) =>
+  Math.round((new Date(`${b}T00:00:00Z`) - new Date(`${a}T00:00:00Z`)) / 86400000);
+
+export const timeAgo = (iso) => {
+  const m = Math.round((Date.now() - new Date(iso)) / 60000);
+  if (m < 1) return "just now";
+  if (m < 60) return `${m}m ago`;
+  const h = Math.round(m / 60);
+  return h < 24 ? `${h}h ago` : `${Math.round(h / 24)}d ago`;
+};
+
+export const CATEGORIES = [
+  ["water", "Water"], ["electricity", "Electricity"], ["wifi", "WiFi"], ["food", "Food"],
+  ["cleaning", "Cleaning"], ["furniture", "Furniture"], ["other", "Other"],
+];
+export const categoryLabel = (k) => CATEGORIES.find(([v]) => v === k)?.[1] ?? k;

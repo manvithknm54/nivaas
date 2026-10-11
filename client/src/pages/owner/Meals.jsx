@@ -51,7 +51,7 @@ function PollCard({ p }) {
             <h2 className="text-xl font-extrabold">{dayLabel(p.date)}</h2>
             {relDay(p.date) && <span className="rounded-full bg-gold-400/30 px-2.5 py-0.5 text-[11px] font-bold">{relDay(p.date)}</span>}
           </div>
-          <div className="text-sm text-ink-900/60">{special} day · {p.voted} of {p.total} voted</div>
+          <div className="text-sm text-ink-900/60">{special} day · {p.voted} of {p.total} voted{p.away ? ` · ${p.away} on leave` : ""}</div>
         </div>
         <span className={`rounded-full px-3 py-1 text-xs font-bold ${stateCls}`}>{stateLabel}</span>
       </div>

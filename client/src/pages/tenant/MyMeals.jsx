@@ -24,7 +24,7 @@ function Choice({ value, selected, disabled, onPick }) {
 
 function PollCard({ p, diet }) {
   const qc = useQueryClient();
-  const open = p.state === "open";
+  const open = p.state === "open" && !p.away;
   const fallback = diet === "nonveg" ? p.option : "veg";
 
   const vote = useMutation({
@@ -33,12 +33,14 @@ function PollCard({ p, diet }) {
     onError: (e) => { toast.error(e.message); qc.invalidateQueries({ queryKey: ["my-meals"] }); },
   });
 
-  const note = {
-    open: p.myChoice ? "You can change your vote until voting closes." : `You haven't voted. We'll go with your diet (${optionLabel(fallback)}).`,
-    upcoming: "Voting opens the day before.",
-    closed: `Voting is closed. You're down for ${optionLabel(p.myChoice || fallback)}.`,
-    locked: `Finalised by the owner. You're down for ${optionLabel(p.myChoice || fallback)}.`,
-  }[p.state];
+  const note = p.away
+    ? "You're on approved leave that day, so you're not counted for this meal."
+    : {
+        open: p.myChoice ? "You can change your vote until voting closes." : `You haven't voted. We'll go with your diet (${optionLabel(fallback)}).`,
+        upcoming: "Voting opens the day before.",
+        closed: `Voting is closed. You're down for ${optionLabel(p.myChoice || fallback)}.`,
+        locked: `Finalised by the owner. You're down for ${optionLabel(p.myChoice || fallback)}.`,
+      }[p.state];
 
   return (
     <div className="card space-y-4">
@@ -54,7 +56,7 @@ function PollCard({ p, diet }) {
       </div>
       <div className="flex gap-3">
         {["veg", p.option].map((c) => (
-          <Choice key={c} value={c} selected={(p.myChoice ?? (open ? null : fallback)) === c}
+          <Choice key={c} value={c} selected={!p.away && (p.myChoice ?? (open ? null : fallback)) === c}
             disabled={!open || vote.isPending} onPick={() => vote.mutate(c)} />
         ))}
       </div>
@@ -65,7 +67,7 @@ function PollCard({ p, diet }) {
 
 export default function MyMeals() {
   const qc = useQueryClient();
-  const { data, isLoading } = useQuery({
+  const { data, isLoading, isError } = useQuery({
     queryKey: ["my-meals"],
     queryFn: async () => (await api.get("/tenant/meals")).data,
     refetchInterval: 10000,
@@ -78,6 +80,7 @@ export default function MyMeals() {
   });
 
   if (isLoading) return <div className="text-sm text-ink-900/50">Loading…</div>;
+  if (isError || !data) return <div className="card text-center text-ink-900/60">Meals aren't available right now. Please try again in a moment.</div>;
 
   return (
     <div className="space-y-8">

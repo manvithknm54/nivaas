@@ -7,7 +7,7 @@ import "./index.css";
 import App from "./App.jsx";
 import { AuthProvider } from "./context/AuthContext.jsx";
 import { DialogProvider } from "./components/ui/DialogProvider.jsx";
-import ErrorBoundary from "./components/ErrorBoundary.jsx";
+import ErrorBoundary from "./pages/owner/ErrorBoundary.jsx";
 
 const qc = new QueryClient({
   defaultOptions: { queries: { retry: false, refetchOnWindowFocus: true, staleTime: 5000 } },

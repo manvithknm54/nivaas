@@ -1,14 +1,7 @@
 import { useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
-import {
-  LayoutDashboard,
-  BedDouble,
-  Users,
-  Settings as Cog,
-  IndianRupee,
-  Utensils,
-} from "lucide-react";
+import { LayoutDashboard, BedDouble, Users, Settings as Cog, IndianRupee, Utensils, Plane, Wifi, MessageSquare } from "lucide-react";
 
 import Shell from "../../components/layout/Shell";
 import Spinner from "../../components/ui/Spinner";
@@ -22,6 +15,9 @@ const nav = [
   { to: "/owner/tenants", label: "Tenants", icon: Users },
   { to: "/owner/rent", label: "Rent", icon: IndianRupee },
   { to: "/owner/meals", label: "Meals", icon: Utensils },
+  { to: "/owner/leaves", label: "Leaves", icon: Plane },
+  { to: "/owner/bills", label: "Bills", icon: Wifi },
+  { to: "/owner/complaints", label: "Complaints", icon: MessageSquare },
   { to: "/owner/settings", label: "Settings", icon: Cog },
 ];
 

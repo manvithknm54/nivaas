@@ -8,6 +8,8 @@ import StatusBadge from "../../components/ui/StatusBadge";
 import Modal from "../../components/ui/Modal";
 import EntryList from "../../components/ui/EntryList";
 import { useDialog } from "../../components/ui/DialogProvider";
+import ExtensionRequests from "../../components/owner/ExtensionRequests";
+import DueDateControl from "../../components/owner/DueDateControl";
 
 function Detail({ id, onDone }) {
   const qc = useQueryClient();
@@ -32,7 +34,7 @@ function Detail({ id, onDone }) {
           : `${inr(v.amount)} credit added for ${data.tenant.name}`
       );
       refresh();
-      onDone(); // close the window so the owner can pick the next tenant
+      onDone();
     },
     onError: (e) => toast.error(e.message),
   });
@@ -76,6 +78,8 @@ function Detail({ id, onDone }) {
           </div>
         ))}
       </div>
+
+      {data.balance > 0 && <DueDateControl due={data} onChanged={refresh} />}
 
       {data.balance > 0 && (
         <form
@@ -124,7 +128,10 @@ export default function Rent() {
   const gen = useMutation({
     mutationFn: () => api.post("/owner/rent/generate", { month }),
     onSuccess: ({ data: d }) => {
-      toast.success(d.created ? `${d.created} new dues created` : "Everything is already up to date");
+      toast.success(
+        d.created ? `${d.created} new dues created` : "Everything is already up to date",
+        { id: "generate-dues" }
+      );
       qc.invalidateQueries({ queryKey: ["rent"] });
     },
     onError: (e) => toast.error(e.message),
@@ -149,6 +156,8 @@ export default function Rent() {
           <button className="btn-ghost" disabled={gen.isPending} onClick={() => gen.mutate()}><RefreshCw size={16} /> Generate dues</button>
         </div>
       </div>
+
+      <ExtensionRequests />
 
       <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
         {stats.map(([l, v]) => (
