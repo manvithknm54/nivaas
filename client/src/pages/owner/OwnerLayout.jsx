@@ -7,6 +7,7 @@ import {
   Users,
   Settings as Cog,
   IndianRupee,
+  Utensils,
 } from "lucide-react";
 
 import Shell from "../../components/layout/Shell";
@@ -20,6 +21,7 @@ const nav = [
   { to: "/owner/rooms", label: "Rooms", icon: BedDouble },
   { to: "/owner/tenants", label: "Tenants", icon: Users },
   { to: "/owner/rent", label: "Rent", icon: IndianRupee },
+  { to: "/owner/meals", label: "Meals", icon: Utensils },
   { to: "/owner/settings", label: "Settings", icon: Cog },
 ];
 
@@ -54,9 +56,7 @@ function CreatePg() {
             className="input"
             required
             value={form.name}
-            onChange={(e) =>
-              setForm({ ...form, name: e.target.value })
-            }
+            onChange={(e) => setForm({ ...form, name: e.target.value })}
           />
         </div>
 
@@ -65,16 +65,11 @@ function CreatePg() {
           <input
             className="input"
             value={form.address}
-            onChange={(e) =>
-              setForm({ ...form, address: e.target.value })
-            }
+            onChange={(e) => setForm({ ...form, address: e.target.value })}
           />
         </div>
 
-        <button
-          className="btn-gold w-full"
-          disabled={create.isPending}
-        >
+        <button className="btn-gold w-full" disabled={create.isPending}>
           {create.isPending ? "Creating..." : "Create my PG"}
         </button>
       </form>

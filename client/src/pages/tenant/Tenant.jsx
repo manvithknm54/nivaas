@@ -1,11 +1,12 @@
 import { useEffect } from "react";
-import { Home, IndianRupee } from "lucide-react";
+import { Home, IndianRupee, Utensils } from "lucide-react";
 import Shell from "../../components/layout/Shell";
 import { useAuth } from "../../context/AuthContext";
 
 const nav = [
   { to: "/app", label: "Home", icon: Home, end: true },
   { to: "/app/rent", label: "Rent", icon: IndianRupee },
+  { to: "/app/meals", label: "Meals", icon: Utensils },
 ];
 
 export function TenantLayout() {
@@ -26,7 +27,7 @@ export function TenantHome() {
   const messages = {
     unassigned: ["You're not in a PG yet", "Scan the QR code your PG owner shows you, or open the invite link they send."],
     pending: ["Request sent", `Waiting for the owner of ${user.pgName || "the PG"} to approve you.`],
-    active: [`Welcome to ${user.pgName}`, "Check the Rent tab for your dues. Meals and leaves are coming soon."],
+    active: [`Welcome to ${user.pgName}`, "Check Rent for your dues and Meals to vote for special days. Leaves are coming soon."],
     left: ["You've left this PG", "Ask your owner for a new invite if this is a mistake."],
   };
   const [title, body] = messages[user.status];
