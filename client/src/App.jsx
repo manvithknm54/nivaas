@@ -9,8 +9,10 @@ import OwnerLayout from "./pages/owner/OwnerLayout";
 import Dashboard from "./pages/owner/Dashboard";
 import Rooms from "./pages/owner/Rooms";
 import Tenants from "./pages/owner/Tenants";
+import Rent from "./pages/owner/Rent";
 import Settings from "./pages/owner/Settings";
 import { TenantLayout, TenantHome } from "./pages/tenant/Tenant";
+import MyRent from "./pages/tenant/MyRent";
 
 function RootRedirect() {
   const { user, loading } = useAuth();
@@ -29,10 +31,12 @@ export default function App() {
         <Route index element={<Dashboard />} />
         <Route path="rooms" element={<Rooms />} />
         <Route path="tenants" element={<Tenants />} />
+        <Route path="rent" element={<Rent />} />
         <Route path="settings" element={<Settings />} />
       </Route>
       <Route path="/app" element={<ProtectedRoute role="tenant"><TenantLayout /></ProtectedRoute>}>
         <Route index element={<TenantHome />} />
+        <Route path="rent" element={<MyRent />} />
       </Route>
       <Route path="*" element={<RootRedirect />} />
     </Routes>
