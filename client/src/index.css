@@ -19,23 +19,33 @@ body {
 }
 
 @layer components {
+  /* General card styling */
   .card {
     @apply rounded-2xl bg-white p-6 shadow-[0_8px_30px_rgba(17,24,51,0.06)] ring-1 ring-ink-900/5;
   }
 
+  /* Input fields */
   .input {
     @apply w-full rounded-xl border border-ink-900/10 bg-white px-4 py-3 text-sm outline-none transition focus:border-gold-500 focus:ring-4 focus:ring-gold-400/20;
   }
 
+  /* Form labels */
   .label {
     @apply mb-1.5 block text-xs font-semibold uppercase tracking-wide text-ink-900/60;
   }
 
+  /* Primary gold button */
   .btn-gold {
     @apply inline-flex items-center justify-center gap-2 rounded-xl bg-gold-400 px-5 py-3 text-sm font-bold text-ink-950 transition hover:bg-gold-500 disabled:cursor-not-allowed disabled:opacity-50;
   }
 
+  /* Secondary ghost button */
   .btn-ghost {
     @apply inline-flex items-center justify-center gap-2 rounded-xl border border-ink-900/10 px-4 py-2.5 text-sm font-semibold transition hover:bg-ink-900/5;
+  }
+
+  /* Destructive action button */
+  .btn-danger {
+    @apply inline-flex items-center justify-center gap-2 rounded-xl bg-red-600 px-5 py-3 text-sm font-bold text-white transition hover:bg-red-700 disabled:cursor-not-allowed disabled:opacity-50;
   }
 }

@@ -7,9 +7,11 @@ import { inr, thisMonth, monthLabel, shiftMonth, dueLabel } from "../../lib/form
 import StatusBadge from "../../components/ui/StatusBadge";
 import Modal from "../../components/ui/Modal";
 import EntryList from "../../components/ui/EntryList";
+import { useDialog } from "../../components/ui/DialogProvider";
 
-function Detail({ id }) {
+function Detail({ id, onDone }) {
   const qc = useQueryClient();
+  const { askText } = useDialog();
   const { data } = useQuery({
     queryKey: ["rent-due", id],
     queryFn: async () => (await api.get(`/owner/rent/${id}`)).data,
@@ -22,14 +24,19 @@ function Detail({ id }) {
   };
 
   const add = useMutation({
-    mutationFn: () => api.post(`/owner/rent/${id}/entries`, { ...form, amount: Number(form.amount) }),
-    onSuccess: () => {
-      toast.success(form.type === "payment" ? "Payment recorded" : "Credit added");
-      setForm({ ...form, amount: "", note: "" });
+    mutationFn: (payload) => api.post(`/owner/rent/${id}/entries`, payload),
+    onSuccess: (_res, v) => {
+      toast.success(
+        v.type === "payment"
+          ? `${inr(v.amount)} recorded for ${data.tenant.name}`
+          : `${inr(v.amount)} credit added for ${data.tenant.name}`
+      );
       refresh();
+      onDone(); // close the window so the owner can pick the next tenant
     },
     onError: (e) => toast.error(e.message),
   });
+
   const reverse = useMutation({
     mutationFn: ({ entryId, note }) => api.post(`/owner/rent/entries/${entryId}/reverse`, { note }),
     onSuccess: () => { toast.success("Entry reversed"); refresh(); },
@@ -37,9 +44,18 @@ function Detail({ id }) {
   });
 
   if (!data) return <div className="py-10 text-center text-sm text-ink-900/50">Loading…</div>;
-  const askReverse = (e) => {
-    const note = prompt("Why are you reversing this entry?");
-    if (note && note.trim().length >= 3) reverse.mutate({ entryId: e.id, note: note.trim() });
+
+  const askReverse = async (e) => {
+    const note = await askText({
+      title: "Reverse this entry?",
+      message: "The original stays in the history, struck through, and a reversal line is added. Nothing is ever deleted.",
+      label: "Reason",
+      placeholder: "e.g. Entered the wrong amount",
+      confirmText: "Reverse entry",
+      minLength: 3,
+      danger: true,
+    });
+    if (note) reverse.mutate({ entryId: e.id, note });
   };
 
   return (
@@ -62,7 +78,10 @@ function Detail({ id }) {
       </div>
 
       {data.balance > 0 && (
-        <form onSubmit={(e) => { e.preventDefault(); add.mutate(); }} className="space-y-3 rounded-xl border border-ink-900/10 p-4">
+        <form
+          onSubmit={(e) => { e.preventDefault(); add.mutate({ ...form, amount: Number(form.amount) }); }}
+          className="space-y-3 rounded-xl border border-ink-900/10 p-4"
+        >
           <div className="grid grid-cols-2 gap-1 rounded-lg bg-ink-900/5 p-1">
             {[["payment", "Payment"], ["credit", "Credit / discount"]].map(([v, l]) => (
               <button type="button" key={v} onClick={() => setForm({ ...form, type: v })}
@@ -177,7 +196,7 @@ export default function Rent() {
       </div>
 
       <Modal open={!!openId} onClose={() => setOpenId(null)} title="Rent details">
-        {openId && <Detail id={openId} />}
+        {openId && <Detail id={openId} onDone={() => setOpenId(null)} />}
       </Modal>
     </div>
   );

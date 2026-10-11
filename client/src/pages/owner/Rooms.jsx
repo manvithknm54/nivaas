@@ -4,9 +4,11 @@ import toast from "react-hot-toast";
 import { Trash2 } from "lucide-react";
 import { api } from "../../api/axios";
 import { usePg } from "../../api/hooks";
+import { useDialog } from "../../components/ui/DialogProvider";
 
 export default function Rooms() {
   const qc = useQueryClient();
+  const { confirmAction } = useDialog();
   const { data: pg } = usePg();
   const { data: rooms = [] } = useQuery({ queryKey: ["rooms"], queryFn: async () => (await api.get("/owner/rooms")).data });
   const [form, setForm] = useState({ number: "", type: "hall", beds: 1 });
@@ -19,10 +21,20 @@ export default function Rooms() {
   });
   const del = useMutation({
     mutationFn: (id) => api.delete(`/owner/rooms/${id}`),
-    onSuccess: refresh,
+    onSuccess: () => { toast.success("Room deleted"); refresh(); },
     onError: (e) => toast.error(e.message),
   });
   const typeOf = (k) => pg.roomTypes.find((t) => t.key === k);
+
+  const askDelete = async (r) => {
+    const ok = await confirmAction({
+      title: `Delete Room ${r.number}?`,
+      message: "This can't be undone. A room that still has tenants can't be deleted.",
+      confirmText: "Delete room",
+      danger: true,
+    });
+    if (ok) del.mutate(r._id);
+  };
 
   return (
     <div className="space-y-8">
@@ -45,7 +57,7 @@ export default function Rooms() {
             <div key={r._id} className="card">
               <div className="flex items-start justify-between">
                 <div className="text-2xl font-extrabold">Room {r.number}</div>
-                <button onClick={() => confirm(`Delete room ${r.number}?`) && del.mutate(r._id)} className="text-ink-900/30 hover:text-red-500"><Trash2 size={18} /></button>
+                <button onClick={() => askDelete(r)} className="text-ink-900/30 hover:text-red-500"><Trash2 size={18} /></button>
               </div>
               <div className="mt-1 text-sm text-ink-900/60">{typeOf(r.type)?.label}</div>
               <div className="mt-4 flex items-center justify-between text-sm">
