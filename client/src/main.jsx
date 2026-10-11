@@ -6,7 +6,9 @@ import "./index.css";
 import App from "./App.jsx";
 import { AuthProvider } from "./context/AuthContext.jsx";
 
-const qc = new QueryClient({ defaultOptions: { queries: { retry: false, refetchOnWindowFocus: false } } });
+const qc = new QueryClient({
+  defaultOptions: { queries: { retry: false, refetchOnWindowFocus: true, staleTime: 5000 } },
+});
 
 createRoot(document.getElementById("root")).render(
   <QueryClientProvider client={qc}>

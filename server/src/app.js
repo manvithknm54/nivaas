@@ -2,7 +2,6 @@ import express from "express";
 import cors from "cors";
 import helmet from "helmet";
 import cookieParser from "cookie-parser";
-import rateLimit from "express-rate-limit";
 import { ZodError } from "zod";
 import authRoutes from "./routes/auth.routes.js";
 import ownerRoutes from "./routes/owner.routes.js";
@@ -15,7 +14,7 @@ app.use(express.json());
 app.use(cookieParser());
 
 app.get("/api/health", (_req, res) => res.json({ status: "ok", app: "nivaas" }));
-app.use("/api/auth", rateLimit({ windowMs: 15 * 60 * 1000, max: 100 }), authRoutes);
+app.use("/api/auth", authRoutes);
 app.use("/api/owner", ownerRoutes);
 app.use("/api/join", joinRoutes);
 
