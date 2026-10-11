@@ -1,3 +1,5 @@
+import path from "path";
+import { fileURLToPath } from "url";
 import express from "express";
 import cors from "cors";
 import helmet from "helmet";
@@ -9,9 +11,19 @@ import tenantRoutes from "./routes/tenant.routes.js";
 import joinRoutes from "./routes/join.routes.js";
 import notificationRoutes from "./routes/notification.routes.js";
 
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const app = express();
-app.set("trust proxy", 1); // needed behind Render/Vercel
-app.use(helmet());
+app.set("trust proxy", 1); // Render sits in front of the app
+
+app.use(
+  helmet({
+    contentSecurityPolicy: {
+      useDefaults: true,
+      // only matters for the local http test in step 3; production is https
+      directives: process.env.NODE_ENV === "production" ? {} : { "upgrade-insecure-requests": null },
+    },
+  })
+);
 app.use(cors({ origin: process.env.CLIENT_URL, credentials: true }));
 app.use(express.json());
 app.use(cookieParser());
@@ -22,6 +34,15 @@ app.use("/api/owner", ownerRoutes);
 app.use("/api/tenant", tenantRoutes);
 app.use("/api/join", joinRoutes);
 app.use("/api/notifications", notificationRoutes);
+
+// Serve the built React app (only when SERVE_CLIENT=true)
+if (process.env.SERVE_CLIENT === "true") {
+  const dist = path.resolve(__dirname, "../../client/dist");
+  app.use(express.static(dist));
+  app.use((req, res, next) =>
+    req.method === "GET" && !req.path.startsWith("/api") ? res.sendFile(path.join(dist, "index.html")) : next()
+  );
+}
 
 app.use((err, _req, res, _next) => {
   if (err instanceof ZodError) return res.status(400).json({ message: err.issues[0].message });
