@@ -8,6 +8,7 @@ const rentDueSchema = new mongoose.Schema(
     amount: { type: Number, required: true, min: 0 },
     dueOn: { type: String, required: true },
     extendedUntil: { type: String, default: null }, // used in Phase 5
+    lastReminderAt: { type: Date, default: null },
   },
   { timestamps: true }
 );

@@ -7,8 +7,10 @@ import authRoutes from "./routes/auth.routes.js";
 import ownerRoutes from "./routes/owner.routes.js";
 import tenantRoutes from "./routes/tenant.routes.js";
 import joinRoutes from "./routes/join.routes.js";
+import notificationRoutes from "./routes/notification.routes.js";
 
 const app = express();
+app.set("trust proxy", 1); // needed behind Render/Vercel
 app.use(helmet());
 app.use(cors({ origin: process.env.CLIENT_URL, credentials: true }));
 app.use(express.json());
@@ -19,6 +21,7 @@ app.use("/api/auth", authRoutes);
 app.use("/api/owner", ownerRoutes);
 app.use("/api/tenant", tenantRoutes);
 app.use("/api/join", joinRoutes);
+app.use("/api/notifications", notificationRoutes);
 
 app.use((err, _req, res, _next) => {
   if (err instanceof ZodError) return res.status(400).json({ message: err.issues[0].message });
