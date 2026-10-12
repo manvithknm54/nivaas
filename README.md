@@ -63,20 +63,6 @@ npm run dev              # app on :5173
 
 Run the tests with `cd server && npm test`. Email is optional (`BREVO_API_KEY` and `MAIL_FROM`); without it, notifications are in-app only.
 
-## AI development experience
-
-**Code0**
-
-**[FILL IN: one or two honest sentences on how you used Code0 in this project, including how you used its Git workspace for commits. Say only what is true.]**
-
-| Task | What Code0 did | What I checked or fixed |
-|---|---|---|
-| **[FILL IN]** | **[FILL IN]** | **[FILL IN]** |
-| **[FILL IN]** | **[FILL IN]** | **[FILL IN]** |
-| **[FILL IN]** | **[FILL IN]** | **[FILL IN]** |
-
-**Other AI help.** I also used Claude as a pair-programmer for design discussions and first drafts. I tested everything by hand and fixed what broke, for example a rate limiter that locked me out, a crash that left a blank screen for tenants who hadn't joined a PG, and two production deployment errors.
-
 ## Known limitations
 
 - No proration for tenants who join mid-month; ending a leave early isn't supported yet.
